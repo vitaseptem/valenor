@@ -50,15 +50,71 @@ class ChatState:
 # Apresentação / presentation
 # ---------------------------------------------------------------------------
 
+# Emblema "A" do VALENOR (lâminas em prata, chave/circuito em ciano).
+# VALENOR "A" emblem (silver blades, cyan keyhole/circuit). Built with
+# Text.append (sem markup) p/ não conflitar com as barras invertidas.
+_W, _C = "white", "bright_cyan"
+_LOGO_ROWS = (
+    (("       /\\", _W),),
+    (("      //\\\\", _W),),
+    (("     //  \\\\", _W),),
+    (("    // ", _W), ("(◉)", _C), (" \\\\", _W)),
+    (("   //  ", _W), ("│", _C), ("  \\\\", _W)),
+    (("  //___", _W), ("│", _C), ("___\\\\", _W)),
+    (("        ", _W), ("│", _C)),
+    (("      ", _W), ("•─┴─•", _C)),
+)
+
+
+def _resolve_name() -> str:
+    """Nome de saudação / greeting name (VALEN_USER → git → $USER)."""
+    import subprocess
+
+    n = os.environ.get("VALEN_USER")
+    if n:
+        return n
+    try:
+        r = subprocess.run(["git", "config", "user.name"],
+                           capture_output=True, text=True, timeout=3)
+        if r.returncode == 0 and r.stdout.strip():
+            return r.stdout.strip()
+    except Exception:
+        pass
+    return os.environ.get("USER") or os.environ.get("USERNAME") or "Studio"
+
+
+def _logo() -> Text:
+    art = Text(justify="center")
+    for i, row in enumerate(_LOGO_ROWS):
+        if i:
+            art.append("\n")
+        for seg, style in row:
+            art.append(seg, style=style)
+    return art
+
+
 def _banner(state: ChatState) -> Panel:
+    name = _resolve_name()
+    wordmark = Text.from_markup(
+        "[bold white]VALEN[/bold white][bold bright_cyan]OR[/bold bright_cyan]",
+        justify="center")
     body = Group(
-        Text(f"✻ {t('chat_welcome', state.lang)}", style="bold bright_magenta"),
         Text(""),
-        Text(f"  {t('chat_hint', state.lang)}", style="dim"),
+        _logo(),
         Text(""),
+        wordmark,
+        Text(t("tagline", state.lang), style="dim", justify="center"),
+        Text(""),
+        Text(t("welcome_back", state.lang, name=name),
+             style="bold bright_cyan", justify="center"),
+        Text(""),
+        Text(f"  {state.model}", style="white"),
+        Text(f"  lang={state.lang}   ·   effort={state.effort}", style="dim"),
         Text(f"  {t('chat_cwd', state.lang)}: {os.getcwd()}", style="dim"),
     )
-    return Panel(body, border_style="bright_magenta", box=ROUNDED, padding=(1, 2))
+    return Panel(body, title="[bold bright_cyan]⟦ VALEN·OR ⟧[/bold bright_cyan]",
+                 title_align="left", border_style="bright_cyan", box=ROUNDED,
+                 padding=(0, 2))
 
 
 def _status_panel(state: ChatState) -> Panel:
@@ -216,6 +272,7 @@ def _handle_command(line: str, state: ChatState) -> bool:
 
 def run_chat(state: ChatState) -> int:
     console.print(_banner(state))
+    console.print(f"  [dim]✦[/dim] {t('tip_model', state.lang, model=state.model)}")
     if not os.environ.get("ANTHROPIC_API_KEY"):
         console.print(f"  [yellow]![/yellow] {t('chat_need_key', state.lang)}")
 

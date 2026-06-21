@@ -99,6 +99,18 @@ STRINGS: dict[str, dict[str, str]] = {
         "en": "Welcome to VALENOR",
         "pt": "Bem-vindo ao VALENOR",
     },
+    "welcome_back": {
+        "en": "Welcome back, {name}!",
+        "pt": "Bem-vindo de volta, {name}!",
+    },
+    "tagline": {
+        "en": "Async Multi-Agent Orchestrator",
+        "pt": "Orquestrador Multiagente Assíncrono",
+    },
+    "tip_model": {
+        "en": "{model} · /model to switch · /help for commands",
+        "pt": "{model} · /model para trocar · /help para comandos",
+    },
     "chat_hint": {
         "en": "/help for commands · /exit to quit · just type to build",
         "pt": "/help para comandos · /exit para sair · digite para construir",
