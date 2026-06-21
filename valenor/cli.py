@@ -599,6 +599,15 @@ def _build_parser() -> argparse.ArgumentParser:
     b.add_argument("--no-memory", action="store_true", help="Disable learning memory.")
     b.add_argument("-s", "--skills", help="Comma-separated skill names to load.")
 
+    c = sub.add_parser("chat", help="Interactive Claude Code-style terminal.")
+    c.add_argument("-m", "--model", default=DEFAULT_MODEL)
+    c.add_argument("-e", "--effort", default=DEFAULT_EFFORT,
+                   choices=["low", "medium", "high", "xhigh", "max"])
+    c.add_argument("-o", "--output-dir", default=Path("valen_output"), type=Path)
+    c.add_argument("--no-qa", action="store_true")
+    c.add_argument("--no-memory", action="store_true")
+    c.add_argument("-s", "--skills")
+
     m = sub.add_parser("memory", help="Obsidian-style learning memory.")
     msub = m.add_subparsers(dest="action", required=True)
     msub.add_parser("list")
@@ -622,7 +631,7 @@ def _build_parser() -> argparse.ArgumentParser:
     return p
 
 
-_SUBCOMMANDS = {"build", "memory", "skills"}
+_SUBCOMMANDS = {"build", "chat", "memory", "skills"}
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -634,18 +643,29 @@ def main(argv: list[str] | None = None) -> int:
     known, rest = pre.parse_known_args(raw)
     lang = detect_lang(known.lang)
 
+    # `valenor` sem args → chat. / Bare `valenor` → chat.
+    if not rest:
+        rest = ["chat"]
     # Atalho: `valenor "prompt"` → build. / Shorthand to build.
-    if rest and rest[0] not in _SUBCOMMANDS and not rest[0].startswith("-"):
+    elif rest[0] not in _SUBCOMMANDS and not rest[0].startswith("-"):
         rest = ["build", "--prompt", " ".join(rest)]
 
     parser = _build_parser()
     args = parser.parse_args(rest)
-    command = args.command or "build"
+    command = args.command or "chat"
 
     if command == "memory":
         return cmd_memory(args, lang)
     if command == "skills":
         return cmd_skills(args, lang)
+    if command == "chat":
+        from .chat import ChatState, run_chat
+
+        names = [s.strip() for s in args.skills.split(",")] if args.skills else None
+        return run_chat(ChatState(
+            lang=lang, model=args.model, effort=args.effort,
+            output_dir=args.output_dir, run_qa=not args.no_qa,
+            use_memory=not args.no_memory, skill_names=names))
 
     # build (default)
     if not os.environ.get("ANTHROPIC_API_KEY"):

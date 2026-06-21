@@ -95,6 +95,27 @@ STRINGS: dict[str, dict[str, str]] = {
         "pt": "Escreva todos os comentários de código e entregáveis Markdown (.md) "
               "em português.",
     },
+    "chat_welcome": {
+        "en": "Welcome to VALENOR",
+        "pt": "Bem-vindo ao VALENOR",
+    },
+    "chat_hint": {
+        "en": "/help for commands · /exit to quit · just type to build",
+        "pt": "/help para comandos · /exit para sair · digite para construir",
+    },
+    "chat_cwd": {"en": "cwd", "pt": "dir"},
+    "chat_bye": {"en": "Bye! 👋", "pt": "Até mais! 👋"},
+    "chat_unknown": {
+        "en": "Unknown command: {cmd}  (try /help)",
+        "pt": "Comando desconhecido: {cmd}  (veja /help)",
+    },
+    "chat_set": {"en": "{field} = {value}", "pt": "{field} = {value}"},
+    "chat_status": {"en": "Current setup", "pt": "Configuração atual"},
+    "chat_help_title": {"en": "Commands", "pt": "Comandos"},
+    "chat_need_key": {
+        "en": "Set ANTHROPIC_API_KEY to build. Slash commands still work.",
+        "pt": "Defina ANTHROPIC_API_KEY para construir. Comandos /slash funcionam.",
+    },
     "lang_directive_both": {
         "en": "Write code comments and Markdown deliverables bilingually "
               "(English and Portuguese).",

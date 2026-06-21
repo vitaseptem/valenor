@@ -40,32 +40,66 @@ by three specialist sub-agents running **in parallel**.
 
 ---
 
-## 📦 Instalação / Install
+## 📦 Instalação 1-comando / one-command install
+
+Os launchers **detectam a plataforma**, criam um **ambiente virtual (`.venv`)**,
+instalam o VALEN e o abrem. São idempotentes (re-execuções reaproveitam o venv).
+
+| Plataforma | Comando |
+|------------|---------|
+| 🐧 Linux · 🍎 macOS · 📱 Termux | `./valenor.sh` |
+| 🍎 macOS (clicável no Finder) | `valenor.command` (duplo-clique) |
+| 🪟 Windows | `valenor.bat` (duplo-clique ou `valenor.bat` no terminal) |
 
 ```bash
-pip install .
-# depois, o comando fica disponível / then the command is available:
-valenor --help
+chmod +x valenor.sh valenor.command   # só na 1ª vez no Unix
+./valenor.sh                          # abre o chat / opens the chat
+./valenor.sh "um app de tarefas"      # execução única / one-shot
+./valenor.sh skills where             # qualquer subcomando / any subcommand
 ```
 
-Desenvolvimento / development: `pip install -e .`
-Sem instalar / without installing: `python valen.py ...` ou `python -m valenor ...`
+### Instalação manual / manual install
+
+```bash
+pip install .            # expõe o comando `valenor`
+pip install -e .         # desenvolvimento / development
+python -m valenor        # sem instalar / without installing
+python valen.py ...      # shim de compatibilidade
+```
 
 ---
+
+## 💬 Terminal / Chat (estilo Claude Code)
+
+`valenor` **sem argumentos** abre um terminal interativo parecido com o do
+Claude Code: banner de boas-vindas, prompt persistente, histórico, *auto-suggest*
+e comandos `/slash`. Cada mensagem comum dispara o pipeline multiagente (uma
+tarefa por turno). / Bare `valenor` opens a Claude Code-style interactive chat.
+
+```text
+╭──────────────────────────────────────────────╮
+│  ✻ Welcome to VALENOR                          │
+│    /help for commands · /exit to quit          │
+│    cwd: /seu/projeto                            │
+╰──────────────────────────────────────────────╯
+valenor › um app de tarefas com autenticação
+valenor › /model claude-opus-4-8
+valenor › /effort xhigh
+valenor › /status
+```
+
+Comandos: `/help` `/status` `/model <id>` `/effort <low…max>` `/lang <en|pt|both>`
+`/qa` `/memory [list|search]` `/skills` `/clear` `/exit`.
 
 ## 🚀 Uso / Usage
 
 ```bash
 export ANTHROPIC_API_KEY="sua-chave"   # your key
 
-# Atalho / shorthand:
-valenor "Um app de lista de tarefas com autenticação JWT"
-
-# Explícito / explicit, em inglês:
-valenor --lang en build -p "A todo-list app with JWT auth"
-
-# Interativo / interactive:
-valenor
+valenor                                       # chat interativo / interactive chat
+valenor "Um app de tarefas com auth JWT"      # atalho execução única / one-shot
+valenor --lang en build -p "A todo-list app"  # explícito / explicit
+valenor chat -m claude-opus-4-8 -e xhigh      # chat com opções / chat with options
 ```
 
 ### Opções de `build`
@@ -146,12 +180,16 @@ As skills do VALEN (`--tool valenor`, padrão) são injetadas nos subagentes com
 ```
 valenor/
   cli.py        # CLI, orquestração assíncrona, UI rich, bundle
+  chat.py       # terminal/chat interativo estilo Claude Code
   agents.py     # Agent + system prompts + protocolo de arquivos
   memory.py     # vault Obsidian (wikilinks, backlinks, recall)
   skills.py     # gerenciador de skills (Claude Code / Codex / Antigravity)
   i18n.py       # camada bilíngue EN/PT
   paths.py      # ~/.valenor (memória, skills)
 pyproject.toml  # define o comando `valenor`
+valenor.sh      # launcher Linux/macOS/Termux (detecta SO + venv)
+valenor.command # launcher clicável macOS (Apple)
+valenor.bat     # launcher Windows
 valen.py        # shim de compatibilidade
 ```
 
