@@ -23,6 +23,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
+from .i18n import t
+
 
 # ---------------------------------------------------------------------------
 # Protocolo de saída — compartilhado por todos os agentes.
@@ -207,3 +209,21 @@ def get_agent(key: str) -> Agent:
         if agent.key == key:
             return agent
     raise KeyError(f"Agente desconhecido: {key!r}")
+
+
+def compose_system(agent: Agent, lang: str, skills_block: str = "") -> str:
+    """Monta o System Prompt final injetado na API.
+
+    Combina o prompt base do agente, a diretriz de idioma (EN/PT/ambos) e o
+    bloco opcional de skills carregadas. Mantém-se estável entre execuções
+    (memória e artefatos vão no turno do usuário, preservando o cache).
+
+    Builds the final system prompt: base prompt + language directive +
+    optional loaded-skills block. Kept stable across runs (memory and
+    artifacts go in the user turn to preserve prompt caching).
+    """
+    directive = t("lang_directive_both" if lang == "both" else "lang_directive", lang)
+    parts = [agent.system, f"## IDIOMA / LANGUAGE\n{directive}"]
+    if skills_block.strip():
+        parts.append(skills_block.strip())
+    return "\n\n".join(parts)

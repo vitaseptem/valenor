@@ -10,3 +10,7 @@ venv/
 
 # Ambiente
 .env
+
+# Build
+build/
+dist/

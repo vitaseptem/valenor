@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "valenor"
+version = "0.2.0"
+description = "Async multi-agent software-development orchestrator (Anthropic API) — Orquestrador multiagente assíncrono de desenvolvimento de software"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+keywords = ["anthropic", "claude", "agents", "cli", "orchestrator", "elixir", "phoenix"]
+dependencies = [
+    "anthropic[aiohttp]>=0.49.0",
+    "rich>=13.7.0",
+    "prompt_toolkit>=3.0.43",
+]
+
+[project.scripts]
+valenor = "valenor.cli:main"
+
+[tool.setuptools]
+packages = ["valenor"]
