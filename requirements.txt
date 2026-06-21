@@ -1,0 +1,18 @@
+# VALEN — Orquestrador Multiagente Assíncrono
+# Funciona em Linux, macOS, Windows e Termux (Android).
+#
+# Instalação:
+#   pip install -r requirements.txt
+#
+# Em Termux, se o backend aiohttp falhar ao compilar, o VALEN cai
+# automaticamente para o backend httpx do SDK — nenhuma ação necessária.
+
+# SDK oficial da Anthropic. O extra [aiohttp] habilita o backend assíncrono
+# de alta concorrência (DefaultAioHttpClient). É opcional em runtime.
+anthropic[aiohttp]>=0.49.0
+
+# Camada de terminal rica: tabelas, spinners, painéis e logs coloridos.
+rich>=13.7.0
+
+# Entrada de prompt interativa e moderna no terminal (histórico, edição).
+prompt_toolkit>=3.0.43

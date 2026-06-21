@@ -1,0 +1,12 @@
+# Saída gerada pelos agentes
+valen_output/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+
+# Ambiente
+.env
